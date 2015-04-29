@@ -217,7 +217,6 @@ BetterClumpFinding <- function(Genome, k, t, L) {
   }
 
   for (i in 2:(nchar(Genome) - L + 1)) {
-    print(i)
     FirstPattern <- substring(Genome, i - 1, i + k - 2)
     j <- PatternToNumber(FirstPattern)
     FrequencyArray[j] <- FrequencyArray[j] - 1
@@ -240,6 +239,12 @@ BetterClumpFinding <- function(Genome, k, t, L) {
   return(FrequentPatterns)
 }
 
-fileName <- 'E-coli.txt'
-Genome <- readChar(fileName, file.info(fileName)$size)
-print(paste(BetterClumpFinding(Genome, 9, 500, 3), collapse = ' '))
+# TODO more testing
+# fileName <- 'E-coli.txt'
+# Genome <- readChar(fileName, file.info(fileName)$size)
+# print(paste(BetterClumpFinding(Genome, 9, 500, 3), collapse = ' '))
+
+# Quiz 1
+PatternCount('GACCATCAAAACTGATAAACTACTTAAAAATCAGT', 'AAA')
+FrequentWords('CGGAGGACTCTAGGTAACGCTTATCAGGTCCATAGGACATTCA', 3)
+ReverseComplement('CCAGATC')
