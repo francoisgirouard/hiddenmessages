@@ -1,8 +1,8 @@
 # PatternCount(Text, Pattern)
-#   count ← 0
-#   for i ← 0 to |Text| − |Pattern|
+#   count <- 0
+#   for i <- 0 to |Text| − |Pattern|
 #     if Text(i, |Pattern|) = Pattern
-#       count ← count + 1
+#       count <- count + 1
 #   return count
 PatternCount <- function(Text, Pattern) {
   count <- 0
@@ -21,12 +21,12 @@ PatternCount <- function(Text, Pattern) {
 # print(PatternCount(Text, Pattern))
 
 # FrequentWords(Text, k)
-#   FrequentPatterns ← an empty set
-#   for i ← 0 to |Text| − k
-#     Pattern ← the k-mer Text(i, k)
-#     Count(i) ← PatternCount(Text, Pattern)
-#   maxCount ← maximum value in array Count
-#   for i ← 0 to |Text| − k
+#   FrequentPatterns <- an empty set
+#   for i <- 0 to |Text| − k
+#     Pattern <- the k-mer Text(i, k)
+#     Count(i) <- PatternCount(Text, Pattern)
+#   maxCount <- maximum value in array Count
+#   for i <- 0 to |Text| − k
 #     if Count(i) = maxCount
 #       add Text(i, k) to FrequentPatterns
 #   remove duplicates from FrequentPatterns
@@ -182,26 +182,26 @@ ClumpFinding <- function(Genome, k, L, t) {
 }
 
 # BetterClumpFinding(Genome, k, t, L)
-#   FrequentPatterns ← an empty set
-#   for i ←0 to 4k − 1
-#     Clump(i) ← 0
-#   Text ← Genome(0, L)
-#   FrequencyArray ← ComputingFrequencies(Text, k)
-#   for i ← 0 to 4k − 1
+#   FrequentPatterns <- an empty set
+#   for i <-0 to 4k − 1
+#     Clump(i) <- 0
+#   Text <- Genome(0, L)
+#   FrequencyArray <- ComputingFrequencies(Text, k)
+#   for i <- 0 to 4k − 1
 #     if FrequencyArray(i) ≥ t
-#       Clump(i) ← 1
-#   for i ← 1 to |Genome| − L
-#     FirstPattern ← Genome(i − 1, k)
-#     j ← PatternToNumber(FirstPattern)
-#     FrequencyArray(j) ← FrequencyArray(j) − 1
-#     LastPattern ← Genome(i + L − k, k)
-#     j ← PatternToNumber(LastPattern)
-#     FrequencyArray(j) ← FrequencyArray(j) + 1
+#       Clump(i) <- 1
+#   for i <- 1 to |Genome| − L
+#     FirstPattern <- Genome(i − 1, k)
+#     j <- PatternToNumber(FirstPattern)
+#     FrequencyArray(j) <- FrequencyArray(j) − 1
+#     LastPattern <- Genome(i + L − k, k)
+#     j <- PatternToNumber(LastPattern)
+#     FrequencyArray(j) <- FrequencyArray(j) + 1
 #     if FrequencyArray(j) ≥ t
-#       Clump(j) ← 1
-#   for i ← 0 to 4k − 1
+#       Clump(j) <- 1
+#   for i <- 0 to 4k − 1
 #     if Clump(i) = 1
-#       Pattern ← NumberToPattern(i, k)
+#       Pattern <- NumberToPattern(i, k)
 #       add Pattern to the set FrequentPatterns
 #   return FrequentPatterns
 BetterClumpFinding <- function(Genome, k, t, L) {

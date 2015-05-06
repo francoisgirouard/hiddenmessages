@@ -36,14 +36,27 @@ MinimumSkew <- function(Genome) {
 # Genome <- readChar(fileName, file.info(fileName)$size)
 # MinimumSkew(Genome)
 
-# Hamming Distance Problem: Compute the Hamming distance between two strings.
+# Hamming Distance Problem: Compute the g distance between two strings.
 # Input: Two strings of equal length.
-# Output: The Hamming distance between these strings.
+# Output: The g distance between these strings.
 HammingDistance <- function(p, q) {
-    return(sum(mapply(function(first, second) {return(first != second)},
-                      first = strsplit(p, ''),
-                      second = strsplit(q, ''))))
+  first <- p
+  second <- q
+  
+  if (length(first) == 1) {
+    first <- strsplit(first, '')[[1]]
+  }
+  
+  if (length(second) == 1) {
+    second <- strsplit(second, '')[[1]]
+  }
+  
+  return(sum(mapply(function(first, second) {
+    return(first != second)
+  }, first = first,
+  second = second)))
 }
+
 
 # p <- 'ATCAAGCTAACGCTCGTTAGCATGTCATTTACGAGCCCGAGTCCTTAGAAATACACGGTCTATGCTGTGTTCGCACATTTTACATCCGTCCACGCGAGCCAACATGAGACGGATCGATTTATCCAGAGCAACTTGCTACCAATTGGCGTCGAGCTATGAAGTCGTGACGTACAATGTATGCAGAAGGGCACCGGGGGTATCCGAGCATACTATCTTGGGCACTGAATGAAGAACAGAACCTTGACCCGGAATCAACACACGCGGTAACGACGCAATCCTGTTCAAAAAAAGCCTGCCACAACAGTCTCAAACCACATACGGTGTAAGGACGTGTCGAATATGCAGACTGTAGATTGTAGGGCAGTACACTCTACAGTAACCGCTGGCACTATTACACACGTGCTCTACCGAGCTTGGATACACACCGTTAATCTCACTTAGGACTCGAAATGTCCCCTGGACTCTCGATGAGCTTAGGTAAGCACAGGTACCTAGGACATCTGCGCCTCCTAGGTGAGCCTCCCGAGAAAATGAGGGGTGATTTATGGGAAGTGAAGTACGGTGAAATAACTCGCAAGGGGGAAAACCGTTGAGACAGACTACCACCTTGACTGCTCCACGATGCGCGCACTTGACAGCCGCTCCTTCCGGACCCTGGACAGTTCTCACTCTGACACGTGATAAGTACGGCCATACGCAGTACGGAACTGCATAGGGCGGCATCGGTTTTCATGCATCGAGTATAGTTGTACCTATTGGCATACAATACTCCCTCGCTTAGCAATTGGCGTTAAATGTCGGGTCCACTGATGTGCACAAGGCTTACTCTCTACTTAGCTGAAAAATGTGCCTGTCCCTCTGCCATTTATACCCTTAAGAAACATCAACAGTTGGCCTGCGAGTCCTCGCCGAGCGCCGAGCCTACTTCTAGCTGCGAACGGTGTAGGCATTAAACAAAACGATGAACATCAATTGCAAGCCGAAATCCGCGGAGTTCGATTTTTTTGGATGCGGTAGATCCTACTCAACCCATATGACTGCAAAGTCCA'
 # q <- 'ACCTATTGCAGCAACTCGTCCGCAGCCCCGGCTGTTTTCACACTAATGGATGCCACTCTGATGGACAGTTCTACGGCAGCAACCGATCAACTCCAACATTATTGGGCAGAGCAGAGACGATTCAGGAATGTACATTGAGCGGGACACGTTAGCTAGAATGAACGCAACTGGAGACATCCTCGAGTGCCGCTGCTAACTCGTAACTCCATGTGGTGTAAGATATTGGCCGCACGATGTCCCCTAACGGGAAAAAATGTTCCATCGGCATACCTCACCGATCCATCAAGCATAGCATGAGCAGCGAACGTCTGGAAGTTTGTCCTGTCACTGCTTCGTCTAAGAAGGGGTAGCGGGATTTGCTAATCTGAAGAACTTGTGCGCAAGGGTCCATGGTGACTATTAGGGAAAGCTAGGTCGTAAAATACACCTCGGGACAATTAATGGTGCGAACAAGGTTACCCCCGCTGTGGTGCTCTGAGGAGGAGCAGTCCGTAGGTATCACATCTCGCCTTCGCCGTCAAAAAGCGGTCATTCAGGAAGAGTCAGATTCGCCATGGGGCATCTACTACCTGAACACACCCTCGGACATGAGTCGCAAGGTGTGAAGGCCAGATCGTAGACCATTGCGGGTGTGACCACTTTGCGGAGGAGAGAATTCAGAAGAATGTGCCCAGATTCTGGCCGCTGAGCCGCCACTTAACAGCTCGAGAAATAAGCATGTGGGCTCTGCCCATGCTACTGCGCCTGCTTTTACACAAGCCATGCGGTAGTGCACTTCTCGAGATGAATTCGCGGAACCGTAGCGGTGTTCGGTCCCACTGCTAAATTACTTGACGTGTAGCCAATCGTTCAGGTTTTATCCGAGGGCTATAGTTAGAGAAGCCCGCGTACCGGTAGCTCCAAACCACGCGGCCAGCGGTCCTCATTTGTATAGTTGGATAAATTTACACGCCGTTCGAATTCGGTCGAGTTTGTGATAAGATGGCCAGTCAGGGAGGTAAAGCGGGGAAGTATAGCACTTTCCGACGAGATTGGTTCTGAAGAGGGTA'
@@ -54,15 +67,15 @@ HammingDistance <- function(p, q) {
 # Output: All starting positions where Pattern appears as a substring of Text with at most d mismatches.
 
 ApproximatePatternMatching <- function(Pattern, Text, d) {
-  hammingDistances <- numeric(nchar(Text) - nchar(Pattern) + 1)
+  HammingDistances <- numeric(nchar(Text) - nchar(Pattern) + 1)
   
-  for (i in 1:length(hammingDistances)) {
-    hammingDistances[i] <- HammingDistance(Pattern,
+  for (i in 1:length(HammingDistances)) {
+    HammingDistances[i] <- HammingDistance(Pattern,
                                            substring(Text, i,
                                                      i + nchar(Pattern) - 1))
   }
   
-  return(which(hammingDistances <= d) - 1)
+  return(which(HammingDistances <= d) - 1)
 }
 
 
@@ -100,17 +113,78 @@ ApproximatePatternCount(Text, Pattern, d)
 # Frequent Words with Mismatches Problem: Find the most frequent k-mers with mismatches in a string.
 # Input: A string Text as well as integers k and d. (You may assume k ≤ 12 and d ≤ 3.)
 # Output: All most frequent k-mers with up to d mismatches in Text.
-FrequentWordsWithMismatches <- function(Text, k, d) {
+ComputingFrequenciesWithMismatches <- function(Text, k, d) {
+  FrequencyArray <- integer(4 ^ k)
+  alphabet <- c('A', 'C', 'G', 'T')
+  
+  for (i in 1:(nchar(Text) - k + 1)) {
+    Pattern <- substring(Text, i, i + k - 1)
+    splitPattern <- strsplit(Pattern, '')[[1]]
+    mismatches <- splitPattern
     
+    for (distance in 1:d) {
+      mismatchesTemplate <- matrix(rep(splitPattern, times = 3 ^ distance), 3 ^ distance, k, TRUE)
+      substitutionCandidates <- character(4 ^ distance)
+      
+      for (index in 1:distance) {
+        substitutionCandidates <- cbind(substitutionCandidates,
+                                        rep(alphabet,
+                                            each = 4 ^ (distance - index),
+                                            times = 4 ^ (index - 1)))
+      }
+      
+      substitutionCandidates <- substitutionCandidates[, -1, drop = FALSE]
+      
+      for (indices in combn(1:k, distance, simplify = FALSE)) {
+        currentMismatches <- mismatchesTemplate
+        substitutes <- substitutionCandidates
+        
+        for (index in seq_along(indices)) {
+          substitutes <- substitutes[substitutes[, index] != splitPattern[indices[index]],] 
+        }
+        
+        currentMismatches[, indices] <- substitutes
+        mismatches <- rbind(mismatches, currentMismatches)
+      }
+    }
+    
+    mismatches <- apply(mismatches, 1, function(row) {return(paste(row, collapse = ''))})
+    mismatches <- as.numeric(lapply(mismatches, PatternToNumber))
+    FrequencyArray[mismatches + 1] <- FrequencyArray[mismatches + 1] + 1
+  }
+  
+  return(FrequencyArray)
 }
 
-k <- 12
-possibles <- character(4^k)
-for (i in k:1) {
-  possibles <- cbind(possibles, rep(c('A', 'C', 'G', 'T'),
-                                    each = 4^(k-(k-i+1)),
-                                    times = 4^(k-i)))
+FrequentWordsWithMismatches <- function(Text, k, d) {
+  FrequencyArray <- ComputingFrequenciesWithMismatches(Text, k, d)
+  return(sapply(which(FrequencyArray == max(FrequencyArray)) - 1, NumberToPattern, k = k))
 }
-rep(c('A', 'C', 'G', 'T'), each = 4^(k-1), times = 4^(k-3))
-rep(c('A', 'C', 'G', 'T'), each = 4^(k-2), times = 4^(3-2))
-rep(c('A', 'C', 'G', 'T'), each = 4^(k-3), times = 4^(3-1))
+
+# fileConn <- file('sample.txt', 'rc')
+# Text <- readLines(fileConn, 1)
+# otherParams <- as.integer(strsplit(readLines(fileConn, 1), ' ')[[1]])
+# FrequentWordsWithMismatches(Text, otherParams[1], otherParams[2])
+# close(fileConn)
+
+# Frequent Words with Mismatches and Reverse Complements Problem: Find the most frequent k-mers (with mismatches and reverse complements) in a DNA string.
+# Input: A DNA string Text as well as integers k and d.
+# Output: All k-mers Pattern maximizing the sum Countd(Text, Pattern)+ Countd(Text, Pattern)
+# over all possible k-mers.
+FrequentWordsWithMismatchesAndReverseComplements <- function(Text, k, d) {
+  FrequencyArray <- ComputingFrequenciesWithMismatches(Text, k, d)
+  FrequencyArray <- FrequencyArray + ComputingFrequenciesWithMismatches(ReverseComplement(Text), k, d)
+  return(sapply(which(FrequencyArray == max(FrequencyArray)) - 1, NumberToPattern, k = k))
+}
+
+# fileConn <- file('sample.txt', 'rc')
+# Text <- readLines(fileConn, 1)
+# otherParams <- as.integer(strsplit(readLines(fileConn, 1), ' ')[[1]])
+# FrequentWordsWithMismatchesAndReverseComplements(Text, otherParams[1], otherParams[2])
+# close(fileConn)
+
+# fileConn <- file('Salmonella_enterica.txt', 'rc')
+# readLines(fileConn, 1)
+# Genome <- paste(readLines(fileConn), collapse = '')
+# close(fileConn)
+# MinimumSkew(Genome)
